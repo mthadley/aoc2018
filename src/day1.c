@@ -2,6 +2,7 @@
 
 #include "day.h"
 #include "day1.h"
+#include "../input/day1.h"
 
 struct Day day1() {
   return (struct Day){
