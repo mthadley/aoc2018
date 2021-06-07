@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "day1.h"
 #include "day2.h"
@@ -22,11 +23,14 @@ int main(int argc, char* argv[]) {
   int day_to_run = 0;
   char opt;
 
-  while ((opt = getopt(argc, argv, "d:")) != -1) {
+  while ((opt = getopt(argc, argv, "d:")) != (char)-1) {
     switch (opt) {
       case 'd':
         day_to_run = atoi(optarg);
         break;
+      default:
+        fprintf(stderr, "Unrecognized option: %c", opt);
+        exit(EXIT_FAILURE);
     }
   }
 
