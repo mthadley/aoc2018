@@ -8,9 +8,7 @@
 
 struct CountState {
   bool counted_two;
-  int two_count;
   bool counted_three;
-  int three_count;
 };
 
 static void count_occurrences(gpointer key_p __attribute__((unused)),
@@ -19,15 +17,8 @@ static void count_occurrences(gpointer key_p __attribute__((unused)),
   unsigned int* count = count_p;
   struct CountState* cs = cs_p;
 
-  if (*count == 2 && !cs->counted_two) {
-    cs->two_count++;
-    cs->counted_two = true;
-  }
-
-  if (*count == 3 && !cs->counted_three) {
-    cs->three_count++;
-    cs->counted_three = true;
-  }
+  if (*count == 2 && !cs->counted_two) cs->counted_two = true;
+  if (*count == 3 && !cs->counted_three) cs->counted_three = true;
 }
 
 struct Day day2() {
@@ -58,16 +49,11 @@ struct Day day2() {
       };
     }
 
-    struct CountState cs = {
-      .counted_two = false,
-      .two_count = 0,
-      .counted_three = false,
-      .three_count = 0,
-    };
+    struct CountState cs = { .counted_two = false, .counted_three = false };
     g_hash_table_foreach(seen, count_occurrences, &cs);
 
-    with_two += cs.two_count;
-    with_three += cs.three_count;
+    if (cs.counted_two) with_two++;
+    if (cs.counted_three) with_three++;
   }
 
   day.part1.actual = with_two * with_three;
