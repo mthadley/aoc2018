@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 struct Answer {
-  size_t expected;
-  size_t actual;
+  char* expected;
+  char* actual;
 };
 
 struct Day {

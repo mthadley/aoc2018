@@ -23,7 +23,7 @@ static void count_occurrences(gpointer key_p __attribute__((unused)),
 
 struct Day day2() {
   struct Day day = {
-    .part1 = { .expected = 5166 }
+    .part1 = { .expected = "5166" }
   };
 
   unsigned int with_two = 0;
@@ -56,7 +56,7 @@ struct Day day2() {
     if (cs.counted_three) with_three++;
   }
 
-  day.part1.actual = with_two * with_three;
+  day.part1.actual = g_strdup_printf("%i", with_two * with_three);
 
   return day;
 }

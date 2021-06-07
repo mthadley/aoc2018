@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <glib.h>
+#include <stdlib.h>
 
 #include "day.h"
 #include "day1.h"
@@ -9,11 +10,11 @@
 
 struct Day day1() {
   struct Day day = {
-    .part1 = { .expected = 400 },
-    .part2 = { .expected = 232 }
+    .part1 = { .expected = "400" },
+    .part2 = { .expected = "232" }
   };
 
-  size_t total = 0;
+  int total = 0;
   bool first_pass = true;
 
   GHashTable* seen = g_hash_table_new(g_int_hash, g_int_equal);
@@ -28,7 +29,7 @@ struct Day day1() {
       total += atoi(line);
 
       if (g_hash_table_contains(seen, &total)) {
-        day.part2.actual = total;
+        day.part2.actual = g_strdup_printf("%i", total);
 
         return day;
       } else {
@@ -37,7 +38,7 @@ struct Day day1() {
     }
 
     if (first_pass) {
-      day.part1.actual = total;
+      day.part1.actual = g_strdup_printf("%i", total);
       first_pass = false;
     }
   }

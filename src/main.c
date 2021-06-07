@@ -67,12 +67,15 @@ void print_part(const struct Answer* answer, int part) {
   if (!answer->expected) {
     sym = "❓";
   } else {
-    if (answer->expected == answer->actual) {
+    if (strcmp(answer->expected, answer->actual) == 0) {
       sym = "✅";
     } else {
       sym = "❌";
     }
   }
 
-  printf("Part %i: %zu %s\n", part, answer->actual, sym);
+  char* result = answer->actual;
+  if (result == NULL) result = "";
+
+  printf("Part %i: %s %s\n", part, result, sym);
 }
