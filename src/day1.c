@@ -27,12 +27,12 @@ struct Day day1() {
 
       total += atoi(line);
 
-      if (g_hash_table_lookup_extended(seen, &total, NULL, NULL)) {
+      if (g_hash_table_contains(seen, &total)) {
         day.part2.actual = total;
 
         return day;
       } else {
-        g_hash_table_insert(seen, &total, NULL);
+        g_hash_table_add(seen, &total);
       }
     }
 
