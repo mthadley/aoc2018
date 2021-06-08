@@ -48,7 +48,7 @@ char* part1(char** lines) {
                                              NULL,
                                              destroyHashItem);
 
-    char c;
+    int c;
     for (int char_n = 0; (c = line[char_n]); char_n++) {
       int* current_count = g_hash_table_lookup(seen, &c);
 
