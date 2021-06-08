@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <glib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "day.h"
 #include "day2.h"
@@ -19,7 +20,7 @@ struct Day day2() {
 
   return (struct Day){
     .part1 = { .actual = part1(lines), .expected = "5166" },
-    .part2 = { .actual = part2(lines), .expected = NULL }
+    .part2 = { .actual = part2(lines), .expected = "cypueihajytordkgzxfqplbwn" }
   };
 }
 
@@ -75,5 +76,39 @@ char* part1(char** lines) {
 }
 
 char* part2(char** lines) {
-  return lines[0];
+  char* line;
+  for (int line_n = 0; (line = lines[line_n]); line_n++) {
+    char* other_line;
+    for (int oline_n = line_n + 1; (other_line = lines[oline_n]); oline_n++) {
+      int c_n = 0;
+      int diff_index = 0;
+      int diff_count = 0;
+
+      while (true) {
+        int c = line[c_n];
+        int other_c = other_line[c_n];
+
+        if (!c) break;
+
+        if (c != other_c) {
+          diff_count++;
+          diff_index = c_n;
+        }
+
+        c_n++;
+      }
+
+      if (diff_count == 1) {
+        int len = strlen(line);
+        char* id_str = malloc((len - 1) * sizeof(char));
+
+        memcpy(id_str, line, diff_index);
+        strncat(id_str, &line[diff_index + 1], 100);
+
+        return id_str;
+      }
+    }
+  }
+
+  return "";
 }
