@@ -34,10 +34,6 @@ static void count_occurrences(gpointer key_p __attribute__((unused)),
   if (*count == 3 && !cs->counted_three) cs->counted_three = true;
 }
 
-static void destroyHashItem(gpointer data) {
-  free(data);
-}
-
 char* part1(char** lines) {
   unsigned int with_two = 0;
   unsigned int with_three = 0;
@@ -47,7 +43,7 @@ char* part1(char** lines) {
     GHashTable* seen = g_hash_table_new_full(g_int_hash,
                                              g_int_equal,
                                              NULL,
-                                             destroyHashItem);
+                                             g_free);
 
     int c;
     for (int char_n = 0; (c = line[char_n]); char_n++) {
