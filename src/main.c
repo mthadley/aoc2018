@@ -56,7 +56,7 @@ void run_day(int day_n) {
   struct Day day = days[day_n - 1]();
 
   printf("Day %i\n", day_n);
-  puts("================");
+  puts("=====================");
   print_part(&day.part1, 1);
   print_part(&day.part2, 2);
 }
