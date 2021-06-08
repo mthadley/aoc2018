@@ -18,10 +18,14 @@ char* part2(char** lines);
 struct Day day2() {
   char** lines = g_strsplit((gchar*)input_day2_txt, "\n", 0);
 
-  return (struct Day){
+  struct Day day = {
     .part1 = { .actual = part1(lines), .expected = "5166" },
     .part2 = { .actual = part2(lines), .expected = "cypueihajytordkgzxfqplbwn" }
   };
+
+  free(lines);
+
+  return day;
 }
 
 static void count_occurrences(gpointer key_p __attribute__((unused)),
