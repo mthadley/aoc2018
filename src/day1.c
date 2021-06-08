@@ -30,6 +30,7 @@ struct Day day1() {
 
       if (g_hash_table_contains(seen, &total)) {
         day.part2.actual = g_strdup_printf("%i", total);
+        g_hash_table_destroy(seen);
 
         return day;
       } else {
