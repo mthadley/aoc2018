@@ -6,6 +6,7 @@
 #include "../input/day3.h"
 
 struct Claim {
+  unsigned int id;
   int x;
   int y;
   unsigned int width;
@@ -58,6 +59,7 @@ struct Claim claim_from_s(char* s) {
   }
 
   struct Claim claim = {
+    .id = fetch_named_int(match_info, "id"),
     .x = fetch_named_int(match_info, "x"),
     .y = fetch_named_int(match_info, "y"),
     .width = fetch_named_int(match_info, "width"),
