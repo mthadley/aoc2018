@@ -23,7 +23,10 @@ struct Day day3() {
   };
 
   char** lines = g_strsplit((gchar*)input_day3_txt, "\n", 0);
-  GHashTable* grid = g_hash_table_new(point_hash_hash, point_hash_equal);
+  GHashTable* grid = g_hash_table_new_full(point_hash_hash,
+                                           point_hash_equal,
+                                           NULL,
+                                           g_free);
 
   char* line;
   for (int line_n = 0; (line = lines[line_n]); line_n++) {
