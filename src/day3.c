@@ -4,6 +4,7 @@
 #include "day.h"
 #include "day3.h"
 #include "../input/day3.h"
+#include "point.h"
 
 struct Claim {
   unsigned int id;
@@ -13,22 +14,40 @@ struct Claim {
   unsigned int height;
 };
 
-struct Claim claim_from_s(char* s);
+struct Claim claim_from_s(char*);
+void claim_add_points(struct Claim*, GHashTable*);
 
 struct Day day3() {
-  struct Day day = {};
+  struct Day day = {
+    .part1 = { .expected = "111485" }
+  };
 
   char** lines = g_strsplit((gchar*)input_day3_txt, "\n", 0);
+  GHashTable* grid = g_hash_table_new(point_hash_hash, point_hash_equal);
 
   char* line;
   for (int line_n = 0; (line = lines[line_n]); line_n++) {
     if (line[0] == '\0') continue;
 
     struct Claim claim = claim_from_s(line);
+    claim_add_points(&claim, grid);
   }
 
+  GHashTableIter iter;
+  gpointer h_value;
+  int total_overlapping = 0;
+
+  g_hash_table_iter_init(&iter, grid);
+  while(g_hash_table_iter_next(&iter, NULL, &h_value)) {
+    int num_overlapping_claims = *(int*)h_value;
+
+    if (num_overlapping_claims > 1) total_overlapping++;
+  }
+
+  day.part1.actual = g_strdup_printf("%i", total_overlapping);
 
   free(lines);
+  g_hash_table_destroy(grid);
 
   return day;
 }
@@ -69,4 +88,23 @@ struct Claim claim_from_s(char* s) {
   free(match_info);
 
   return claim;
+}
+
+void claim_add_points(struct Claim* claim, GHashTable* points) {
+  for (unsigned int x = claim->x; x < (claim->x + claim->width); x++) {
+    for (unsigned int y = claim->y; y < (claim->y + claim->height); y++) {
+      struct Point point = point_new(x, y);
+
+      int* current_count = g_hash_table_lookup(points, &point);
+
+      if (current_count) {
+        (*current_count)++;
+      } else {
+        unsigned int* count = malloc(sizeof(unsigned int));
+        *count = 1;
+
+        g_hash_table_insert(points, &point, count);
+      }
+    }
+  }
 }
