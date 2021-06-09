@@ -5,15 +5,17 @@
 
 #include "day1.h"
 #include "day2.h"
+#include "day3.h"
 #include "day.h"
 
-#define MAX_DAYS 2
+#define MAX_DAYS 3
 
 typedef struct Day (*DAY_FN)(void);
 
 const DAY_FN days[MAX_DAYS] = {
   day1,
-  day2
+  day2,
+  day3
 };
 
 void print_part(const struct Answer* answer, int part);
