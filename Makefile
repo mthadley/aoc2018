@@ -9,7 +9,7 @@ input/%.h: input/%.txt
 
 .PHONY: clean
 clean:
-	rm -fr aoc
+	rm -fr aoc input/*.h
 
 .PHONY: watch
 watch:
