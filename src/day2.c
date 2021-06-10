@@ -12,8 +12,8 @@ struct CountState {
   bool counted_three;
 };
 
-char* part1(char** lines);
-char* part2(char** lines);
+static char* part1(char** lines);
+static char* part2(char** lines);
 
 struct Day day2() {
   char** lines = g_strsplit((gchar*)input_day2_txt, "\n", 0);
@@ -38,7 +38,7 @@ static void count_occurrences(gpointer key_p __attribute__((unused)),
   if (*count == 3 && !cs->counted_three) cs->counted_three = true;
 }
 
-char* part1(char** lines) {
+static char* part1(char** lines) {
   unsigned int with_two = 0;
   unsigned int with_three = 0;
 
@@ -75,7 +75,7 @@ char* part1(char** lines) {
   return g_strdup_printf("%i", with_two * with_three);
 }
 
-char* part2(char** lines) {
+static char* part2(char** lines) {
   char* line;
   for (int line_n = 0; (line = lines[line_n]); line_n++) {
     char* other_line;
