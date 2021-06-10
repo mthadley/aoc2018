@@ -4,12 +4,6 @@
 
 #include "point.h"
 
-struct Point point_new(int x, int y) {
-  struct Point point = { .x = x, .y = y };
-
-  return point;
-}
-
 bool point_equal(struct Point* a, struct Point* b) {
   return a->x == b->x && a->y == b->y;
 }

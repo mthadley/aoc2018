@@ -8,8 +8,7 @@
 
 struct Claim {
   unsigned int id;
-  int x;
-  int y;
+  struct Point loc;
   unsigned int width;
   unsigned int height;
 };
@@ -46,7 +45,7 @@ struct Day day3() {
 
     claim_add_points(claim, grid);
     g_array_append_val(claims, claim);
-    total_claims ++;
+    total_claims++;
   }
 
   day.part1.actual = part1(grid);
@@ -80,15 +79,19 @@ static char* part2(GHashTable* grid, GArray* claims, int total_claims) {
 
     bool no_overlapping = true;
 
-    for (unsigned int x = claim->x; x < (claim->x + claim->width); x++) {
-      for (unsigned int y = claim->y; y < (claim->y + claim->height); y++) {
-        struct Point point = point_new(x, y);
+    for (unsigned int x = claim->loc.x; x < (claim->loc.x + claim->width); x++) {
+      for (unsigned int y = claim->loc.y; y < (claim->loc.y + claim->height); y++) {
+        struct Point point = { .x = x, .y = y };
         int* overlapping_count = g_hash_table_lookup(grid, &point);
 
-        if (*overlapping_count > 1) no_overlapping = false;
+        if (*overlapping_count > 1) {
+          no_overlapping = false;
+          goto END;
+        }
       }
     }
 
+END:
     if (no_overlapping) return g_strdup_printf("%i", claim->id);
   }
 
@@ -122,8 +125,10 @@ static struct Claim claim_from_s(char* s) {
 
   struct Claim claim = {
     .id = fetch_named_int(match_info, "id"),
-    .x = fetch_named_int(match_info, "x"),
-    .y = fetch_named_int(match_info, "y"),
+    .loc = {
+      .x = fetch_named_int(match_info, "x"),
+      .y = fetch_named_int(match_info, "y"),
+    },
     .width = fetch_named_int(match_info, "width"),
     .height = fetch_named_int(match_info, "height"),
   };
@@ -134,20 +139,22 @@ static struct Claim claim_from_s(char* s) {
 }
 
 static void claim_add_points(struct Claim* claim, GHashTable* points) {
-  for (unsigned int x = claim->x; x < (claim->x + claim->width); x++) {
-    for (unsigned int y = claim->y; y < (claim->y + claim->height); y++) {
-      struct Point* point = malloc(sizeof(struct Point));
-      *point = point_new(x, y);
+  for (unsigned int x = claim->loc.x; x < (claim->loc.x + claim->width); x++) {
+    for (unsigned int y = claim->loc.y; y < (claim->loc.y + claim->height); y++) {
+      struct Point point = { .x = x, .y = y };
 
-      int* current_count = g_hash_table_lookup(points, point);
+      int* current_count = g_hash_table_lookup(points, &point);
 
       if (current_count) {
         (*current_count)++;
       } else {
+        struct Point* point_p = malloc(sizeof(struct Point));
+        *point_p = point;
+
         unsigned int* count = malloc(sizeof(unsigned int));
         *count = 1;
 
-        g_hash_table_insert(points, point, count);
+        g_hash_table_insert(points, point_p, count);
       }
     }
   }

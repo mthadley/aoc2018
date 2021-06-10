@@ -8,7 +8,6 @@ struct Point {
   int y;
 };
 
-struct Point point_new(int, int);
 bool point_equal(struct Point*, struct Point*);
 gboolean point_hash_equal(gconstpointer, gconstpointer);
 unsigned int point_hash(struct Point*);
