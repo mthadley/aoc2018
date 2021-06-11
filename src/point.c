@@ -13,8 +13,10 @@ gboolean point_hash_equal(gconstpointer a, gconstpointer b) {
 }
 
 unsigned int point_hash(struct Point* point) {
-  char str_p[25];
-  sprintf(str_p, "%i,%i", point->x, point->y);
+  char str_p[3];
+  str_p[0] = point->x;
+  str_p[1] = ',';
+  str_p[2] = point->y;
 
   return g_str_hash(str_p);
 }
