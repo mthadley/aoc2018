@@ -12,13 +12,26 @@ gboolean point_hash_equal(gconstpointer a, gconstpointer b) {
   return point_equal((struct Point*)a, (struct Point*) b);
 }
 
-unsigned int point_hash(struct Point* point) {
-  char str_p[3];
-  str_p[0] = point->x;
-  str_p[1] = ',';
-  str_p[2] = point->y;
+#define POINT_HASH_MAX 50
+static char point_hash_buf[POINT_HASH_MAX];
 
-  return g_str_hash(str_p);
+/* Not thread safe. Oh well. */
+unsigned int point_hash(struct Point* point) {
+  int size = snprintf(point_hash_buf,
+                      POINT_HASH_MAX,
+                      "%i,%i",
+                      point->x,
+                      point->y);
+
+  if (size >= POINT_HASH_MAX) {
+    fprintf(stderr,
+            "Hit max point hash size with (%i, %i)",
+            point->x,
+            point->y);
+    exit(EXIT_FAILURE);
+  }
+
+  return g_str_hash(point_hash_buf);
 }
 
 guint point_hash_hash(gconstpointer point) {
