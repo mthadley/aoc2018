@@ -13,10 +13,10 @@ gboolean point_hash_equal(gconstpointer a, gconstpointer b) {
 }
 
 #define POINT_HASH_MAX 50
-static char point_hash_buf[POINT_HASH_MAX];
 
-/* Not thread safe. Oh well. */
 unsigned int point_hash(struct Point* point) {
+  char point_hash_buf[POINT_HASH_MAX];
+
   int size = snprintf(point_hash_buf,
                       POINT_HASH_MAX,
                       "%i,%i",
