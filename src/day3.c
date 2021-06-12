@@ -100,7 +100,7 @@ END:
 
 #define CLAIM_REGEX "^#(?<id>\\d+)\\s+@\\s+(?<x>\\d+),(?<y>\\d+):\\s+(?<width>\\d+)x(?<height>\\d+)$"
 
-GRegex* claim_regex;
+static GRegex* claim_regex;
 
 static int fetch_named_int(GMatchInfo* match_info, char* name) {
   return atoi(g_match_info_fetch_named(match_info, name));
