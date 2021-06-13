@@ -6,11 +6,6 @@
 #include "day4.h"
 #include "../input/day4.h"
 
-struct Timestamp {
-  unsigned int hour;
-  unsigned int minute;
-};
-
 enum Event {
   StartedShift,
   FellAsleep,
@@ -18,14 +13,14 @@ enum Event {
 };
 
 struct LogEntry {
-  struct Timestamp ts;
+  GDateTime* ts;
   unsigned int id;
   enum Event event;
 };
 
 static struct LogEntry log_entry_from_s(char*);
 
-#define TS_REGEX "\\[\\d+-\\d+-\\d+\\s(?<hour>\\d+):(?<minute>\\d+)\\]"
+#define TS_REGEX "\\[(?<year>\\d+)-(?<month>\\d+)-(?<day>\\d+)\\s(?<hour>\\d+):(?<minute>\\d+)\\]"
 #define EVENT_REGEX "(?<asleep>falls asleep)|(?<wakes>wakes up)|(?<begin>Guard #(?<id>\\d+) begins shift)"
 
 static GRegex* ts_regex;
@@ -80,9 +75,16 @@ static struct LogEntry log_entry_from_s(char* s) {
     exit(EXIT_FAILURE);
   }
 
-  struct Timestamp ts = {
-    .hour = fetch_named_int(match_info, "hour"),
-    .minute = fetch_named_int(match_info, "minute")
+  struct LogEntry entry = {
+    .ts = g_date_time_new(
+      g_time_zone_new_utc(),
+      fetch_named_int(match_info, "year"),
+      fetch_named_int(match_info, "month"),
+      fetch_named_int(match_info, "day"),
+      fetch_named_int(match_info, "hour"),
+      fetch_named_int(match_info, "minute"),
+      0
+    ),
   };
 
   g_match_info_free(match_info);
@@ -91,10 +93,6 @@ static struct LogEntry log_entry_from_s(char* s) {
     fprintf(stderr, "Line did not match ts regex: %s\n", s);
     exit(EXIT_FAILURE);
   }
-
-  struct LogEntry entry = {
-    .ts = ts,
-  };
 
   if (*g_match_info_fetch_named(match_info, "asleep")) {
     entry.event = FellAsleep;
