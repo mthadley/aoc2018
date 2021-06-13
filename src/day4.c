@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <glib.h>
+#include <stdbool.h>
 
 #include "day.h"
 #include "day4.h"
@@ -22,7 +23,7 @@ struct LogEntry {
   enum Event event;
 };
 
-static struct LogEntry log_entry_from_s(char*, unsigned int);
+static struct LogEntry log_entry_from_s(char*);
 
 #define TS_REGEX "\\[\\d+-\\d+-\\d+\\s(?<hour>\\d+):(?<minute>\\d+)\\]"
 #define EVENT_REGEX "(?<asleep>falls asleep)|(?<wakes>wakes up)|(?<begin>Guard #(?<id>\\d+) begins shift)"
@@ -36,13 +37,13 @@ struct Day day4() {
 
   char** lines = g_strsplit((gchar*)input_day4_txt, "\n", 0);
   char* line;
-  unsigned int previous_id = 0;
+  GArray* entries = g_array_new(true, true, sizeof(struct LogEntry));
+
   for (int line_n = 0; (line = lines[line_n]); line_n++) {
     if (line[0] == '\0') continue;
 
-    struct LogEntry entry = log_entry_from_s(line, previous_id);
-    previous_id = entry.id;
-    printf("Entry #%u, event %u\n", entry.id, entry.event);
+    struct LogEntry entry = log_entry_from_s(line);
+    g_array_append_val(entries, entry);
   }
 
   free(ts_regex);
@@ -67,7 +68,7 @@ static int fetch_named_int(GMatchInfo* match_info, char* name) {
   return atoi(g_match_info_fetch_named(match_info, name));
 }
 
-static struct LogEntry log_entry_from_s(char* s, unsigned int previous_id) {
+static struct LogEntry log_entry_from_s(char* s) {
   if (!ts_regex) ts_regex = compile_regex_or_die(TS_REGEX);
   if (!event_regex) event_regex = compile_regex_or_die(EVENT_REGEX);
 
@@ -84,7 +85,8 @@ static struct LogEntry log_entry_from_s(char* s, unsigned int previous_id) {
     .minute = fetch_named_int(match_info, "minute")
   };
 
-  free(match_info);
+  g_match_info_free(match_info);
+
   if (!g_regex_match(event_regex, s, 0, &match_info)) {
     fprintf(stderr, "Line did not match ts regex: %s\n", s);
     exit(EXIT_FAILURE);
@@ -96,10 +98,8 @@ static struct LogEntry log_entry_from_s(char* s, unsigned int previous_id) {
 
   if (*g_match_info_fetch_named(match_info, "asleep")) {
     entry.event = FellAsleep;
-    entry.id = previous_id;
   } else if (*g_match_info_fetch_named(match_info, "wakes")) {
     entry.event = WokeUp;
-    entry.id = previous_id;
   } else if (*g_match_info_fetch_named(match_info, "begin")) {
     entry.event = StartedShift;
     entry.id = fetch_named_int(match_info, "id");
@@ -108,7 +108,7 @@ static struct LogEntry log_entry_from_s(char* s, unsigned int previous_id) {
     exit(EXIT_FAILURE);
   }
 
-  free(match_info);
+  g_match_info_free(match_info);
 
   return entry;
 }
