@@ -4,12 +4,15 @@ import (
 	"fmt"
 
 	"github.com/mthadley/aoc2018/internal/day"
+	"github.com/mthadley/aoc2018/internal/day/day1"
+	"github.com/mthadley/aoc2018/internal/day/day2"
 )
 
 type dayFn = func() day.Day
 
 var allDays = [...]dayFn{
-	day.Day1,
+	day1.Day,
+	day2.Day,
 }
 
 func main() {

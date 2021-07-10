@@ -1,19 +1,20 @@
-package day
+package day1
 
 import (
 	"fmt"
 	"log"
 	"strconv"
 
+	"github.com/mthadley/aoc2018/internal/day"
 	"github.com/mthadley/aoc2018/internal/input"
 )
 
-func Day1() Day {
+func Day() day.Day {
 	lines := input.Readlines("day1.txt")
 
-	return Day{
-		Part1: Part{Actual: part1(lines), Expected: "400"},
-		Part2: Part{Actual: part2(lines), Expected: "232"},
+	return day.Day{
+		Part1: day.Part{Actual: part1(lines), Expected: "400"},
+		Part2: day.Part{Actual: part2(lines), Expected: "232"},
 	}
 }
 
