@@ -6,6 +6,7 @@ import (
 	"github.com/mthadley/aoc2018/internal/day"
 	"github.com/mthadley/aoc2018/internal/day/day1"
 	"github.com/mthadley/aoc2018/internal/day/day2"
+	"github.com/mthadley/aoc2018/internal/day/day3"
 )
 
 type dayFn = func() day.Day
@@ -13,6 +14,7 @@ type dayFn = func() day.Day
 var allDays = [...]dayFn{
 	day1.Day,
 	day2.Day,
+	day3.Day,
 }
 
 func main() {
