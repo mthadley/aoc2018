@@ -25,7 +25,9 @@ func Day() day.Day {
 		logEntries[i] = logEntry
 	}
 
-	sort.Sort(byTime(logEntries))
+	sort.Slice(logEntries, func(i, j int) bool {
+		return logEntries[i].ts.Before(logEntries[j].ts)
+	})
 
 	return day.Day{
 		Part1: day.Part{Actual: part1(logEntries), Expected: "63509"},
@@ -149,18 +151,4 @@ func parseLogEntry(line string) (logEntry, error) {
 	entry.ts = time
 
 	return entry, nil
-}
-
-type byTime []logEntry
-
-func (entry byTime) Len() int {
-	return len(entry)
-}
-
-func (entry byTime) Swap(i, j int) {
-	entry[i], entry[j] = entry[j], entry[i]
-}
-
-func (entry byTime) Less(i, j int) bool {
-	return entry[i].ts.Before(entry[j].ts)
 }
