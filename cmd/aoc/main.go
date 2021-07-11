@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/mthadley/aoc2018/internal/day"
 	"github.com/mthadley/aoc2018/internal/day/day1"
@@ -17,11 +18,48 @@ var allDays = [...]dayFn{
 	day3.Day,
 }
 
+type answer struct {
+	dayNum int
+	day    day.Day
+}
+
 func main() {
-	for i, day := range allDays {
-		printDay(i+1, day())
+	runAllDays()
+}
+
+func runAllDays() {
+	problems := make(chan int, len(allDays))
+	answers := make(chan answer, len(allDays))
+
+	startWorkers(problems, answers)
+	for i, _ := range allDays {
+		problems <- i
+	}
+
+	for i, day := range collectAnswers(answers) {
+		printDay(i+1, day)
 		fmt.Println()
 	}
+}
+
+func startWorkers(problems <-chan int, answers chan<- answer) {
+	for i := 0; i < runtime.NumCPU(); i++ {
+		go func() {
+			dayNum := <-problems
+			day := allDays[dayNum]()
+			answers <- answer{dayNum: dayNum, day: day}
+		}()
+	}
+}
+
+func collectAnswers(answers <-chan answer) (results []day.Day) {
+	results = make([]day.Day, len(allDays))
+	for range allDays {
+		answer := <-answers
+		results[answer.dayNum] = answer.day
+	}
+
+	return
 }
 
 func printDay(num int, day day.Day) {

@@ -26,7 +26,6 @@ func Day() day.Day {
 	}
 
 	points := claimPoints(claims)
-	fmt.Println(len(points))
 
 	return day.Day{
 		Part1: day.Part{Actual: part1(points), Expected: "111485"},
