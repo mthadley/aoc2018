@@ -25,16 +25,58 @@ func Day() day.Day {
 		logEntries[i] = logEntry
 	}
 
-	sort.Slice(logEntries, func(i, j int) bool {
-		return logEntries[i].ts.Before(logEntries[j].ts)
-	})
+	summary := newMinutesSummary(logEntries)
 
 	return day.Day{
-		Part1: day.Part{Actual: part1(logEntries), Expected: "63509"},
+		Part1: day.Part{Actual: part1(summary), Expected: "63509"},
+		Part2: day.Part{Actual: part2(summary), Expected: "47910"},
 	}
 }
 
-func part1(entries []logEntry) string {
+func part1(summary minutesSummary) string {
+	var mostAsleepGuard int
+	mostMinutes := 0
+
+	for _, id := range summary.ids() {
+		total := summary.minutesAsleep(id)
+
+		if total > mostMinutes {
+			mostAsleepGuard = id
+			mostMinutes = total
+		}
+	}
+
+	minute, _ := summary.mostSleptMinute(mostAsleepGuard)
+
+	return fmt.Sprint(minute * mostAsleepGuard)
+}
+
+func part2(summary minutesSummary) string {
+	var mostAsleepGuard, mostMinute int
+	mostMinutes := 0
+
+	for _, id := range summary.ids() {
+		minute, total := summary.mostSleptMinute(id)
+
+		if total > mostMinutes {
+			mostMinute = minute
+			mostAsleepGuard = id
+			mostMinutes = total
+		}
+	}
+
+	return fmt.Sprint(mostMinute * mostAsleepGuard)
+}
+
+type minutesSummary struct {
+	minutes map[int]map[int]int
+}
+
+func newMinutesSummary(entries []logEntry) minutesSummary {
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].ts.Before(entries[j].ts)
+	})
+
 	var currentId int
 	var asleepAt time.Time
 	minutesById := map[int]map[int]int{}
@@ -55,43 +97,46 @@ func part1(entries []logEntry) string {
 		}
 	}
 
-	var mostAsleepGuard int
-	mostMinutes := 0
-
-	for id, minutes := range minutesById {
-		total := minutesAsleep(minutes)
-
-		if total > mostMinutes {
-			mostAsleepGuard = id
-			mostMinutes = total
-		}
-	}
-
-	return fmt.Sprint(mostSleptMinute(minutesById[mostAsleepGuard]) * mostAsleepGuard)
+	return minutesSummary{minutes: minutesById}
 }
 
-func minutesAsleep(minutes map[int]int) int {
+func (summary *minutesSummary) forId(id int) map[int]int {
+	return summary.minutes[id]
+}
+
+func (summary *minutesSummary) ids() (ids []int) {
+	i := 0
+	ids = make([]int, len(summary.minutes))
+
+	for id := range summary.minutes {
+		ids[i] = id
+		i++
+	}
+	return
+}
+
+func (summary *minutesSummary) minutesAsleep(id int) int {
 	total := 0
 
-	for _, v := range minutes {
+	for _, v := range summary.minutes[id] {
 		total += v
 	}
 
 	return total
 }
 
-func mostSleptMinute(minutes map[int]int) int {
+func (summary *minutesSummary) mostSleptMinute(id int) (int, int) {
 	mostMinute := 0
 	total := 0
 
-	for minute, minuteTotal := range minutes {
+	for minute, minuteTotal := range summary.minutes[id] {
 		if minuteTotal > total {
 			mostMinute = minute
 			total = minuteTotal
 		}
 	}
 
-	return mostMinute
+	return mostMinute, total
 }
 
 type logEntry struct {
