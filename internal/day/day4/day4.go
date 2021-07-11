@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"sort"
 	"time"
 
 	"github.com/mthadley/aoc2018/internal/day"
@@ -24,9 +25,71 @@ func Day() day.Day {
 		logEntries[i] = logEntry
 	}
 
-	fmt.Println(len(logEntries))
+	sort.Sort(byTime(logEntries))
 
-	return day.Day{}
+	return day.Day{
+		Part1: day.Part{Actual: part1(logEntries), Expected: "63509"},
+	}
+}
+
+func part1(entries []logEntry) string {
+	var currentId int
+	var asleepAt time.Time
+	minutesById := map[int]map[int]int{}
+
+	for _, entry := range entries {
+		switch entry.event {
+		case startedShift:
+			currentId = entry.id
+		case fellAsleep:
+			asleepAt = entry.ts
+		case wokeup:
+			for i := asleepAt.Minute(); i < entry.ts.Minute(); i++ {
+				if minutesById[currentId] == nil {
+					minutesById[currentId] = map[int]int{}
+				}
+				minutesById[currentId][i]++
+			}
+		}
+	}
+
+	var mostAsleepGuard int
+	mostMinutes := 0
+
+	for id, minutes := range minutesById {
+		total := minutesAsleep(minutes)
+
+		if total > mostMinutes {
+			mostAsleepGuard = id
+			mostMinutes = total
+		}
+	}
+
+	return fmt.Sprint(mostSleptMinute(minutesById[mostAsleepGuard]) * mostAsleepGuard)
+}
+
+func minutesAsleep(minutes map[int]int) int {
+	total := 0
+
+	for _, v := range minutes {
+		total += v
+	}
+
+	return total
+}
+
+func mostSleptMinute(minutes map[int]int) int {
+	mostMinute := 0
+	total := 0
+
+	for minute, minuteTotal := range minutes {
+		if minuteTotal > total {
+			mostMinute = minute
+			total = minuteTotal
+		}
+	}
+
+	return mostMinute
 }
 
 type logEntry struct {
@@ -38,7 +101,7 @@ type logEntry struct {
 type Event int
 
 const (
-	startedShift = iota
+	startedShift Event = iota
 	fellAsleep
 	wokeup
 )
@@ -86,4 +149,18 @@ func parseLogEntry(line string) (logEntry, error) {
 	entry.ts = time
 
 	return entry, nil
+}
+
+type byTime []logEntry
+
+func (entry byTime) Len() int {
+	return len(entry)
+}
+
+func (entry byTime) Swap(i, j int) {
+	entry[i], entry[j] = entry[j], entry[i]
+}
+
+func (entry byTime) Less(i, j int) bool {
+	return entry[i].ts.Before(entry[j].ts)
 }
