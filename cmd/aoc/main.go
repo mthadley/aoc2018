@@ -8,6 +8,7 @@ import (
 	"github.com/mthadley/aoc2018/internal/day/day1"
 	"github.com/mthadley/aoc2018/internal/day/day2"
 	"github.com/mthadley/aoc2018/internal/day/day3"
+	"github.com/mthadley/aoc2018/internal/day/day4"
 )
 
 type dayFn = func() day.Day
@@ -16,6 +17,7 @@ var allDays = [...]dayFn{
 	day1.Day,
 	day2.Day,
 	day3.Day,
+	day4.Day,
 }
 
 type answer struct {

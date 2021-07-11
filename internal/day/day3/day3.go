@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"strconv"
 
 	"github.com/mthadley/aoc2018/internal/day"
 	"github.com/mthadley/aoc2018/internal/input"
@@ -109,21 +108,12 @@ func parseClaim(line string) (claim, error) {
 	}
 
 	return claim{
-		id: mustBeInt(matches[claimRegex.SubexpIndex("id")]),
+		id: input.MustBeInt(matches[claimRegex.SubexpIndex("id")]),
 		loc: point.New(
-			mustBeInt(matches[claimRegex.SubexpIndex("x")]),
-			mustBeInt(matches[claimRegex.SubexpIndex("y")]),
+			input.MustBeInt(matches[claimRegex.SubexpIndex("x")]),
+			input.MustBeInt(matches[claimRegex.SubexpIndex("y")]),
 		),
-		width:  mustBeInt(matches[claimRegex.SubexpIndex("width")]),
-		height: mustBeInt(matches[claimRegex.SubexpIndex("height")]),
+		width:  input.MustBeInt(matches[claimRegex.SubexpIndex("width")]),
+		height: input.MustBeInt(matches[claimRegex.SubexpIndex("height")]),
 	}, nil
-}
-
-func mustBeInt(str string) int {
-	num, err := strconv.ParseInt(str, 0, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return int(num)
 }
