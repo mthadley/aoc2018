@@ -47,9 +47,10 @@ func runAllDays() {
 func startWorkers(problems <-chan int, answers chan<- answer) {
 	for i := 0; i < runtime.NumCPU(); i++ {
 		go func() {
-			dayNum := <-problems
-			day := allDays[dayNum]()
-			answers <- answer{dayNum: dayNum, day: day}
+			for dayNum := range problems {
+				day := allDays[dayNum]()
+				answers <- answer{dayNum: dayNum, day: day}
+			}
 		}()
 	}
 }
