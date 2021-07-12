@@ -15,11 +15,26 @@ func Day() day.Day {
 
 	return day.Day{
 		Part1: day.Part{Actual: part1(line), Expected: "11668"},
+		Part2: day.Part{Actual: part2(line), Expected: "4652"},
 	}
 }
 
 func part1(line string) string {
 	return fmt.Sprint(len(react(line)))
+}
+
+func part2(line string) string {
+	lowest := len(line)
+
+	for _, unit := range allUnits(line) {
+		reactedLen := len(react(removeUnit(line, unit)))
+
+		if reactedLen < lowest {
+			lowest = reactedLen
+		}
+	}
+
+	return fmt.Sprint(lowest)
 }
 
 func react(line string) string {
@@ -51,8 +66,34 @@ func react(line string) string {
 	return result
 }
 
+func allUnits(line string) []rune {
+	seen := map[rune]bool{}
+	for _, r := range line {
+		seen[unicode.ToLower(r)] = true
+	}
+
+	i := 0
+	units := make([]rune, len(seen))
+	for r := range seen {
+		units[i] = r
+		i++
+	}
+
+	return units
+}
+
 func reactsWith(r, otherR rune) bool {
 	return unicode.ToLower(r) == unicode.ToLower(otherR) &&
 		((unicode.IsLower(r) && unicode.IsUpper(otherR)) ||
 			(unicode.IsUpper(r) && unicode.IsLower(otherR)))
+}
+
+func removeUnit(s string, r rune) string {
+	rs := string(r)
+
+	return strings.ReplaceAll(
+		strings.ReplaceAll(s, strings.ToLower(rs), ""),
+		strings.ToUpper(rs),
+		"",
+	)
 }
