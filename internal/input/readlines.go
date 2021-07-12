@@ -2,12 +2,13 @@ package input
 
 import (
 	"bufio"
+	"io/ioutil"
 	"log"
 	"os"
 )
 
 func Readlines(filename string) (lines []string) {
-	file, err := os.Open("input/" + filename)
+	file, err := os.Open(inputPath(filename))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -19,4 +20,17 @@ func Readlines(filename string) (lines []string) {
 	}
 
 	return
+}
+
+func Read(filename string) string {
+	content, err := ioutil.ReadFile(inputPath(filename))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(content)
+}
+
+func inputPath(filename string) string {
+	return "input/" + filename
 }
