@@ -24,10 +24,19 @@ func part1(line string) string {
 }
 
 func part2(line string) string {
+	allUnits := allUnits(line)
+	results := make(chan int, len(allUnits))
 	lowest := len(line)
 
-	for _, unit := range allUnits(line) {
-		reactedLen := len(react(removeUnit(line, unit)))
+	for _, unit := range allUnits {
+		go func(r rune) {
+			reactedLen := len(react(removeUnit(line, r)))
+			results <- reactedLen
+		}(unit)
+	}
+
+	for range allUnits {
+		reactedLen := <-results
 
 		if reactedLen < lowest {
 			lowest = reactedLen
