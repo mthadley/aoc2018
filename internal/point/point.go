@@ -1,11 +1,10 @@
 package point
 
 type Point struct {
-	X int
-	Y int
+	X, Y int
 }
 
-func New(x int, y int) Point {
+func New(x, y int) Point {
 	return Point{x, y}
 }
 

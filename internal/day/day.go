@@ -1,8 +1,7 @@
 package day
 
 type Day struct {
-	Part1 Part
-	Part2 Part
+	Part1, Part2 Part
 }
 
 type Part struct {

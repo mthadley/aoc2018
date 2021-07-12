@@ -74,7 +74,7 @@ type minutesSummary struct {
 
 func newMinutesSummary(entries []logEntry) minutesSummary {
 	sort.Slice(entries, func(i, j int) bool {
-		return entries[i].ts.Before(entries[j].ts)
+		return entries[i].time.Before(entries[j].time)
 	})
 
 	var currentId int
@@ -86,9 +86,9 @@ func newMinutesSummary(entries []logEntry) minutesSummary {
 		case startedShift:
 			currentId = entry.id
 		case fellAsleep:
-			asleepAt = entry.ts
+			asleepAt = entry.time
 		case wokeup:
-			for i := asleepAt.Minute(); i < entry.ts.Minute(); i++ {
+			for i := asleepAt.Minute(); i < entry.time.Minute(); i++ {
 				if minutesById[currentId] == nil {
 					minutesById[currentId] = map[int]int{}
 				}
@@ -140,15 +140,15 @@ func (summary *minutesSummary) mostSleptMinute(id int) (int, int) {
 }
 
 type logEntry struct {
-	ts    time.Time
 	id    int
-	event Event
+	event event
+	time  time.Time
 }
 
-type Event int
+type event int
 
 const (
-	startedShift Event = iota
+	startedShift event = iota
 	fellAsleep
 	wokeup
 )
@@ -193,7 +193,7 @@ func parseLogEntry(line string) (logEntry, error) {
 		return entry, err
 	}
 
-	entry.ts = time
+	entry.time = time
 
 	return entry, nil
 }
