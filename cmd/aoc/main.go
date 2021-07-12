@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"runtime"
 
@@ -28,7 +29,16 @@ type answer struct {
 }
 
 func main() {
-	runAllDays()
+	dayPtr := flag.Int("d", 0, "The day to run")
+	flag.Parse()
+
+	if *dayPtr > 0 {
+		dayNum := *dayPtr
+		day := allDays[dayNum-1]()
+		printDay(dayNum, day)
+	} else {
+		runAllDays()
+	}
 }
 
 func runAllDays() {
